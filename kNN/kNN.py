@@ -18,6 +18,7 @@ class kNN():
         dataSetSize = dataSet.shape[0]
         diffMat = tile(inX, (dataSetSize,1)) - dataSet
         sqDiffMat = diffMat ** 2
+        #axis=1 按行求和
         sqDistances = sqDiffMat.sum(axis=1)
         distances = sqDistances ** 0.5
         sortedDistIndicies = distances.argsort()
@@ -28,7 +29,7 @@ class kNN():
 
         #sortedClassCount = sorted(classCount.iteritems(), key=lambda x:x[1], reverse=True)
         sortedClassCount = sorted(classCount.iteritems(), key=operator.itemgetter(1), reverse=True)
-        print sortedClassCount[0][0]
+        #print sortedClassCount[0][0]
         return sortedClassCount[0][0]
 
     def file2matrix(self, filename):
@@ -48,10 +49,38 @@ class kNN():
                 index += 1
         return returnmatrix,classLabels
 
+    def autoNorm(self, dataSet):
+        #min(0) 按列求最值
+        minVals = dataSet.min(0)
+        maxVals = dataSet.max(0)
+        ranges = maxVals - minVals
+        normalDataSet = zeros(shape(dataSet))
+        m = dataSet.shape[0]
+        normalDataSet = dataSet - tile(minVals,(m,1))
+        normalDataSet = normalDataSet/tile(ranges,(m,1))
+        return normalDataSet, ranges, minVals
 
+    #测试分类算法的效果,错误率
+    def datingClassTest(self):
+        #选取测试样本的比例
+        hoRatio = 0.50
+        datingDataMat, datingLables = self.file2matrix('testDating.txt')
+        normalMat, ranges, minvals = self.autoNorm(datingDataMat)
+        m = normalMat.shape[0]
+        numTestVecs = int(m*hoRatio)
+        errorCount = 0.0
+        for i in range(numTestVecs):
+            classfierResult = self.classify0(normalMat[i,:], normalMat[numTestVecs:m,:], datingLables[numTestVecs:m], self.k)
+            print '%dth test result is %d, and labels is %d' % (i+1, classfierResult, datingLables[i])
+            if classfierResult != datingLables[i]:
+                errorCount += 1
+        errRate = errorCount/float(numTestVecs)
+        print 'final error rate is: %f' % errRate
+        return errRate
 
 if __name__ == '__main__':
     knn = kNN(3, 3)
+
     print knn.k, 'this is for data in program'
     dataSet, group = knn.createDataSet()
     knn.classify0([1,0], dataSet, group, knn.k)
@@ -59,5 +88,11 @@ if __name__ == '__main__':
     print 'this is data from file'
     dataSet, group = knn.file2matrix('testDating.txt')
     print dataSet,group
-    knn.classify0([5000, 10, 0.5], dataSet, group, knn.k)
+
+    normalDataSet, ranges, minVals = knn.autoNorm(dataSet)
+    print "normal dataset", normalDataSet, ranges, minVals
+    knn.classify0([5000, 10, 0.5], normalDataSet, group, knn.k)
+
+    print 'verify the algorithm ...'
+    knn.datingClassTest()
 
