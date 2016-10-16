@@ -78,6 +78,18 @@ class kNN():
         print 'final error rate is: %f' % errRate
         return errRate
 
+    def classfiyPerson(self):
+        # labels in file is 1, 2, 3
+        resultList = ['not at all', 'in small doses', 'in large doses']
+        percentTats = float(raw_input("percentage of time spent playing video games?"))
+        ffMiles = float(raw_input('frequent flier miles earned per year?'))
+        iceCream = float(raw_input('liters of ice cream consumed per year?'))
+        datingDataMat, datingLabels = self.file2matrix('testDating.txt')
+        normalMat, ranges, minvals = self.autoNorm(datingDataMat)
+        inArr = array([ffMiles, percentTats, iceCream])
+        classifierResult = self.classify0((inArr-minVals)/ranges, normalMat, datingLabels, self.k)
+        print 'you will probably like this person: ', resultList[classifierResult-1]
+
 if __name__ == '__main__':
     knn = kNN(3, 3)
 
@@ -96,3 +108,4 @@ if __name__ == '__main__':
     print 'verify the algorithm ...'
     knn.datingClassTest()
 
+    knn.classfiyPerson()
