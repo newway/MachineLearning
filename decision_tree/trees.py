@@ -49,6 +49,7 @@ def chooseBestFeatureToSplit(dataSet):
             subDataSet = splitDataSet(dataSet, i, value)
             prob = len(subDataSet) / float(len(dataSet))
             newEntropy += prob * calcShannonEnt(subDataSet)
+<<<<<<< HEAD
         infoGain = baseEntropy - newEntropy
         if infoGain > bestInfoGain:
             bestInfoGain = infoGain
@@ -111,3 +112,5 @@ if __name__ == '__main__':
     print myTree, labels
     print classify(myTree, labels, [1, 0])
     print classify(myTree, labels, [1, 1])
+=======
+>>>>>>> origin/develop
