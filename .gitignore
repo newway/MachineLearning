@@ -1,0 +1,12 @@
+*.pyc
+*/*.pyc
+*/*/*.pyc
+*.dat
+*/*.dat
+*/*/*.dat
+*.log
+*.txt
+*/*.txt
+*/*/*.txt
+.DS_Store
+*.swp
