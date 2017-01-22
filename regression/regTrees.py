@@ -101,6 +101,60 @@ def prune(tree, testData):
     else:
         return tree
 
+#模型树的叶节点生成函数
 
+#执行简单的线性回归，获取回归系数
+def linearSolve(dataSet):
+    m,n = shape(dataSet)
+    X = mat(ones((m, n)))
+    Y = mat(ones((m, n)))
+    X[:, 1:n] = dataSet[:, 0:n-1]
+    Y = dataSet[:,-1]
+    xTx = X.T * X
+    if linalg.det(xTx) == 0.0:
+        raise NameError('This matrix is singular, cannot do inverse, \n\
+                        try increasing the second value of ops')
+    ws = xTx.I * (X.T * Y)
+    return ws, X, Y
+#当数据不再需要切分时，返回叶节点的模型，回归系数
+def modelLeaf(dataSet):
+    ws,X,Y = linearSolve(dataSet)
+    return ws
 
+#计算误差
+def modelErr(dataSet):
+    ws,X,Y = linearSolve(dataSet)
+    yHat = X * ws
+    return sum(power(Y - yHat), 2)
+
+def regTreeEval(model, inDat):
+    return float(model)
+
+def modelTreeEval(model, inDat):
+    n = shape(inDat)[1]
+    X = mat(ones((1, n+1)))
+    X[:, 1:n+1] = inDat
+    return float(X*model)
+
+#利用树对输入数据进行分类预测
+def treeForeCast(tree, inData, modelEval=regTreeEval):
+    if not isTree(tree):
+        return modelEval(tree, inData)
+    if inData[tree['spInd']] > tree['spVal']:
+        if isTree(tree['left']):
+            return treeForeCast(tree['left'], inData, modelEval)
+        else:
+            return modelEval(tree['left'], inData)
+    else:
+        if isTree(tree['right']):
+            return treeForeCast(tree['right'], inData, modelEval)
+        else:
+            return modelEval(tree['right'], inData)
+
+def createForeCast(tree, testData, modelEval=regTreeEval):
+    m = len(testData)
+    yHat = mat(zeros((m, 1)))
+    for i in range(m):
+        yHat[i,0] = treeForeCast(tree, mat(testData[i]), modelEval)
+    return yHat
 
