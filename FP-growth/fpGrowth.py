@@ -82,3 +82,35 @@ def createInitSet(dataSet):
         retDict[one] = retDict.get(one, 0) + 1
     return retDict
 
+def ascendTree(leafNode, prefixPath):
+    if leafNode.parent != None:
+        prefixPath.append(leafNode.name)
+        ascendTree(leafNode.parent, prefixPath)
+
+def findPrefixPath(basePat, treeNode):
+    #条件模式基（conditional pattern base）是以所查找元素为结尾的路径集合
+    #每一条路径都是一条前缀路径，是介于所查找元素与树根节点之间的所有内容
+    condPats = {}
+    while treeNode != None:
+        prefixPath = []
+        ascendTree(treeNode, prefixPath)
+        if len(prefixPath) > 1:
+            #叶节点的计数等于以叶节点开始的路径计数
+            condPats[frozenset(prefixPath[1:])] = treeNode.count
+        treeNode = treeNode.nodeLink
+    return condPats
+
+#查找频繁项集
+def mineTree(inTree, headerTable, minSup, preFix, freqItemList):
+    bigL = [v[0] for v in sorted(headerTable.items(), key=lambda p:p[1])]
+    #从出现频率最低的元素开始查找
+    for basePat in bigL:
+        newFreqSet = preFix.copy()
+        newFreqSet.add(basePat)
+        freqItemList.append(newFreqSet)
+        condPattBases = findPrefixPath(basePat, headerTable[basePat][1])
+        #根据所有以相同元素为起点的条件模式基，构建条件FP-tree
+        myCondTree, myHead = createTree(condPattBases, minSup)
+        if myHead != None:
+            #新的树是不包含basePat元素的Fp-tree，继续寻找频繁项集
+            mineTree(myCondTree, myHead, minSup, newFreqSet, freqItemList)
