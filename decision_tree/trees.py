@@ -42,13 +42,17 @@ def chooseBestFeatureToSplit(dataSet):
     baseEntropy = calcShannonEnt(dataSet)
     bestInfoGain = 0.0; bestFeature = -1
     for i in range(numFeatures):
+        #属性i上的所有特征值
         featList = [item[i] for item in dataSet]
         uniqueVals = set(featList)
         newEntropy = 0.0
         for value in uniqueVals:
+            #返回属性i的值为value的所有数据，返回数据不包含属性i
             subDataSet = splitDataSet(dataSet, i, value)
+            #属性i值为value的概率
             prob = len(subDataSet) / float(len(dataSet))
             newEntropy += prob * calcShannonEnt(subDataSet)
+        #newEntropy 为当前属性所有特征值进行划分的所有子集的熵之和
         infoGain = baseEntropy - newEntropy
         if infoGain > bestInfoGain:
             bestInfoGain = infoGain
