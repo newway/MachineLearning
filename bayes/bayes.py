@@ -12,6 +12,7 @@ def loadDataSet():
     classVec = [0,1,0,1,0,1]    #1:侮辱性文字 0:正常
     return postingList, classVec
 
+#所有单词集合
 def createVocabList(dataSet):
     vocabSet = set([])
     for document in dataSet:
@@ -28,7 +29,7 @@ def setOfWords2Vec(vocabList, inputSet):
     return returnVec
 
 #朴素贝叶斯训练函数
-#trainMatrix:词表特征向量组成的矩阵
+#trainMatrix:词表特征向量组成的矩阵, trainCategory为文档对应的分类list
 def trainNB0(trainMatrix, trainCategory):
     numTrainDocs = len(trainMatrix)
     #词表的长度
@@ -36,12 +37,12 @@ def trainNB0(trainMatrix, trainCategory):
     pAbusive = sum(trainCategory) / float(numTrainDocs)
     #统计各个分类里面,词表中每个单词出现次数
     #p0Num = zeros(numWords); p1Num = zeros(numWords)
-    #初值取1防止,条件概率为0,影响连乘结果
+    #初值取1,防止条件概率为0,影响连乘结果
     p0Num = ones(numWords)
     p1Num = ones(numWords)
     #统计各个分类里面,单词出现的总数
     #p0Denom = 0.0; p1Denom = 0.0
-    p0Denom = 1.0*numWords;
+    p0Denom = 1.0*numWords
     p1Denom = 1.0*numWords
     for i in range(numTrainDocs):
         if trainCategory[i] == 1:
@@ -61,7 +62,7 @@ def trainNB0(trainMatrix, trainCategory):
 #原理:p(ci|w) = p(w|ci)*p(ci) / p(w),假设各个单词独立, p(w|ci) = p(w0|ci)*p(w1|ci)...p(wn|ci)
 #已知单词,求分类的条件概率
 def classifyNB(vec2Classify, p0Vec, p1Vec, pClass1):
-    #对数求和等价于 条件概率求积
+    #条件概率求积等价于对数求和
     p1 = sum(vec2Classify * p1Vec) + log(pClass1)
     p0 = sum(vec2Classify * p0Vec) + log(1.0-pClass1)
     if p1 > p0:

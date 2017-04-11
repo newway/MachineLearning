@@ -18,6 +18,7 @@ def selectJrand(i, m):
         j = int(random.uniform(0, m))
     return j
 
+#限制取值范围
 def clipAlpha(aj, H, L):
     if aj > H:
         aj = H
@@ -25,6 +26,7 @@ def clipAlpha(aj, H, L):
         aj = L
     return aj
 
+#参数：数据集，类别标签，常数C，容错率，最大的循环次数
 def smoSimple(dataMatIn, classLabels, C, toler, maxIter):
     dataMatrix = mat(dataMatIn)
     labelMat = mat(classLabels).transpose()
@@ -33,10 +35,12 @@ def smoSimple(dataMatIn, classLabels, C, toler, maxIter):
     alphas = mat(zeros((m, 1)))
     iter = 0
     while (iter < maxIter):
+        #上次外循环是否有alpha对发生改变
         alphaPairsChanged = 0
         for i in range(m):
             fXi = float(multiply(alphas, labelMat).T * (dataMatrix*dataMatrix[i,:].T)) + b
             Ei = fXi - float(labelMat[i])
+            #当前数据向量可以优化
             if ((labelMat[i]*Ei < -toler) and (alphas[i]<C)) or \
                     ((labelMat[i]*Ei > toler) and (alphas[i]>0)):
                 j = selectJrand(i, m)

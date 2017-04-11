@@ -16,6 +16,7 @@ class kNN():
     #各个特征值使用相同的权重,可改进为不同权重
     def classify0(self, inX, dataSet, labels, k):
         dataSetSize = dataSet.shape[0]
+        #dataSet每行数据到inX的距离， inX为行向量按照dataSetSize扩展
         diffMat = tile(inX, (dataSetSize,1)) - dataSet
         sqDiffMat = diffMat ** 2
         #axis=1 按行求和

@@ -74,6 +74,7 @@ def createTree(dataSet, labels):
     classList = [example[-1] for example in dataSet]
     if classList.count(classList[0]) == len(classList):
         return classList[0]
+    #划分使用完所有特征时，按照数据集中的类别进行多数表决
     if len(dataSet[0]) == 1:
         return majorityCnt(classList)
     bestFeat = chooseBestFeatureToSplit(dataSet)
