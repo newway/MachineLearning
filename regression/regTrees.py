@@ -18,6 +18,7 @@ def binSplitDataSet(dataSet, feature, value):
     print mat0
     return mat0, mat1
 
+#leafType：创建叶节点函数， errType：计算误差函数
 def createTree(dataSet, leafType=regLeaf, errType=regErr, ops=(1,4)):
     feat, val = chooseBestSplit(dataSet, leafType, errType, ops)
     if feat == None:
@@ -36,6 +37,7 @@ def regLeaf(dataSet):
 def regErr(dataSet):
     return var(dataSet[:, -1]) * shape(dataSet)[0]
 
+#与决策树的区别：树回归使用最小平方误差作为数据划分标准，且只做2类划分； 决策树使用特征值的所有子集的信息增益最大作为划分标准，划分的子集数目为特征值数量
 def chooseBestSplit(dataSet, leafType=regLeaf, errType=regErr, ops=(1,4)):
     tolS = ops[0]
     tolN = ops[1]
@@ -92,6 +94,7 @@ def prune(tree, testData):
         lSet, rSet = binSplitDataSet(testData, tree['spInd'], tree['spVal'])
         errorNoMerge = sum(power(lSet[:,-1] - tree['left'], 2)) + sum(power(rSet[:,-1] - tree['right'], 2))
         treeMean = (tree['left'] + tree['right']) / 2.0
+        #将2个叶节点合并成一个节点后的误差之和，合并之后的预测值是treeMean
         errorMerge = sum(power(testData[:,-1] - treeMean, 2))
         if errorMerge < errorNoMerge:
             print "merging"

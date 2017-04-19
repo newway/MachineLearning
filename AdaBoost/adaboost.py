@@ -17,7 +17,7 @@ def stumpClassify(dataMatrix, dimen, threshVal, threshIneq):
     if threshIneq == 'lt':
         retArray[dataMatrix[:, dimen] <= threshVal] = -1.0
     else:
-        retArray[dataMatrix[:, dimen] > threshVal] = -1.0
+        retArray[dataMatrix[:, dimen] > threshVal] = 1.0
     return retArray
 
 #构建单层决策树
