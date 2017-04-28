@@ -14,6 +14,7 @@ def createC1(dataSet):
     C1.sort()
     return map(frozenset, C1)
 
+#D:data, Ck: set with k elements
 def scanD(D, Ck, minSupport):
     ssCnt = {}
     for tid in D:
@@ -33,7 +34,7 @@ def scanD(D, Ck, minSupport):
         supportData[key] = support
     return retList, supportData
 
-#Lk为list，元素是一个长度相同集合的集合，合并产生长为k的候选项集合Ck
+#Lk为list，元素是一个包含k-1个项的集合，两两合并产生长为k的候选项集合Ck
 def aprioriGen(Lk, k):
     retList = []
     lenLk = len(Lk)
@@ -54,7 +55,7 @@ def apriori(dataSet, minSupport=0.5):
     L = [L1]
     k = 2
     while (len(L[k-2]) > 0):
-        #生成长度weik的候选集合
+        #生成长度为k的候选集合
         Ck = aprioriGen(L[k-2], k)
         #候选集中筛选出满足最小支持度的集合Lk
         Lk, supK = scanD(D, Ck, minSupport)
@@ -76,7 +77,7 @@ def generateRules(L, supportData, minConf=0.7):
                 calcConf(freqSet, H1, supportData, bigRuleList)
     return bigRuleList
 
-#计算规则可信度，一条规则P -》 H的可信度定义为：support(P | H) / support(P)
+#计算规则可信度，返回满足置信度要求的关联结果。一条规则P -》 H的可信度定义为：support(P | H) / support(P)
 def calcConf(freqSet, H, supportData, brl, minConf=0.7):
     prunedH = []
     for conseq in H:
@@ -87,7 +88,7 @@ def calcConf(freqSet, H, supportData, brl, minConf=0.7):
             prunedH.append(conseq)
     return prunedH
 
-#生成候选规则集合
+#生成候选规则集合,freqSet：频繁项集{0,1,2}，H：关联规则右部列表[{0},{1},{2}]，brl：关联规则
 def rulesFromConseq(freqSet, H, supportData, brl, minConf=0.7):
     #m元项，H中每个元素是一个包含m个项的list
     m = len(H[0])

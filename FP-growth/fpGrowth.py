@@ -82,11 +82,13 @@ def createInitSet(dataSet):
         retDict[one] = retDict.get(one, 0) + 1
     return retDict
 
+#发现以给定元素结尾到树根的路径，不包括树根
 def ascendTree(leafNode, prefixPath):
     if leafNode.parent != None:
         prefixPath.append(leafNode.name)
         ascendTree(leafNode.parent, prefixPath)
 
+#发现以给定元素结尾的所有路径
 def findPrefixPath(basePat, treeNode):
     #条件模式基（conditional pattern base）是以所查找元素为结尾的路径集合
     #每一条路径都是一条前缀路径，是介于所查找元素与树根节点之间的所有内容
@@ -95,7 +97,7 @@ def findPrefixPath(basePat, treeNode):
         prefixPath = []
         ascendTree(treeNode, prefixPath)
         if len(prefixPath) > 1:
-            #叶节点的计数等于以叶节点开始的路径计数
+            #查找节点的计数等于以该节点开始的路径计数，[1:0]从1开始不包括节点本身，构成条件模式基
             condPats[frozenset(prefixPath[1:])] = treeNode.count
         treeNode = treeNode.nodeLink
     return condPats

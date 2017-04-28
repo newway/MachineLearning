@@ -25,7 +25,7 @@ def randCent(dataSet, k):
         centroids[:, j] = minJ + rangeJ * random.rand(k, 1)
     return centroids
 
-#K-均值聚类算法， 弊端，随机选择k个质点，导致最后结果可能收敛于具备最小值
+#K-均值聚类算法， 弊端，随机选择k个质点，导致最后结果可能收敛于局部最小值
 def kMeans(dataSet, k, distMeas = distEclud, createCent=randCent):
     m = shape(dataSet)[0]
     #第一列表示点所属质心编号， 第二列表示到质心的距离平方
@@ -56,7 +56,7 @@ def kMeans(dataSet, k, distMeas = distEclud, createCent=randCent):
 def biKmeans(dataSet, k, distMeas=distEclud):
     m = shape(dataSet)[0]
     clusterAssment = mat(zeros((m, 2)))
-    #完整数据的质心
+    #完整数据的质心,list type
     centroid0 = mean(dataSet, axis=0).tolist()[0]
     centList = [centroid0]
     for j in range(m):
@@ -71,7 +71,7 @@ def biKmeans(dataSet, k, distMeas=distEclud):
             sseSplit = sum(splitClustAss[:,1])
             #所有不属于簇i的误差之和
             sseNoSplit = sum(clusterAssment[nonzero(clusterAssment[:,0].A != i)[0], 1])
-            print 'sseSplit, and notSpllit: ', sseSplit, sseNoSplit
+            print 'sseSplit, and notSplit: ', sseSplit, sseNoSplit
             if (sseSplit + sseNoSplit) < lowestSSE:
                 bestCentToSplit = i
                 bestNewCents = centroidMat
