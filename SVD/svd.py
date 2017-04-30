@@ -3,7 +3,7 @@
 from numpy import *
 from numpy import linalg as la
 
-#相似度计算
+#相似度计算，欧式距离，对数据量级敏感
 def eulidSim(inA, inB):
     return 1.0/(1.0 + la.norm(inA - inB))
 
@@ -64,7 +64,8 @@ def svdEst(dataMat, user, simMeas, item):
     #奇异值分解
     U,Sigma,VT = la.svd(dataMat)
     Sig4 = mat(eye(4) * Sigma[:4])
-    xformedItems = dataMat.T * U[:,:4] * Sig4.I
+    # 构建转换后的物品，dataMat * V = U * Sigma, 即对列（物品）进行压缩，这里为什么还要用dataMat.T 乘以U[:,:4] * Sig4.I ？？？
+    xformedItems = dataMat.T * U[:,:4] * Sig4.I     #？ U[:,:4] * Sig4.I，选择4个主要物品进行相似度计算
     for j in range(n):
         userRating = dataMat[user, j]
         if userRating == 0 or j==item:
@@ -91,8 +92,8 @@ def test():
     sigRecon = mat(zeros((4,4)))
     for k in range(4):
         sigRecon[k,k] = Sigma[k]
-    print "reconSigma: \n", sigRecon
+    #print "reconSigma: \n", sigRecon
     xform = m.T * U[:,:4] * sig4.I
-    print "xform: \n", xform
+    print "xform: \n", xform, "\nanother xform:\n", U[:,:4] * sig4.I
     reconM = U[:,:4]*sigRecon*VT[:4,:]
     print "reconM: \n", reconM
