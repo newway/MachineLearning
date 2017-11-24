@@ -28,3 +28,19 @@ def generateResult(bags, test):
     for item in bags:
         res += item(test)
     return res
+
+#random forest
+# use sampled datat and features
+# 假设数据有d个特征，一般随机选择log2 d个特征，然后从属性子集中选择1个最优属性进行划分
+#与bagging相比，除了数据样本扰动，还有属性扰动，增加了基学习器的多样性，集成之后增加了泛化性能，且一般比bagging训练效率高
+def randomForest(data, T):
+    forest = []
+    for i in T:
+        dataSet = sampleData(data)
+        tree = createTree(dataSet[:[random feature]], labels)
+        forest.append(tree)
+    return forest
+
+#ensemble
+E = ⋶ - A
+基学习器误差⋶越小，多样性A越大，则最终的泛化误差越小
